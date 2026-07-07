@@ -7,7 +7,7 @@
 * GitHub
 * Main menu
 
-# Person 2 (You)
+# Person 2
 * Materials CRUD
 * Suppliers CRUD
 * Search
