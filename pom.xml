@@ -18,13 +18,26 @@
 
     <dependencies>
 
-        <!-- PostgreSQL JDBC Driver -->
+        <!-- Derby JDBC Driver -->
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.7.7</version>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <version>10.14.2.0</version>
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <mainClass>za.belgiumcampus.cleaninginventory.app.MainFrame</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
