@@ -8,7 +8,7 @@ public class Material {
     private String description;
     private int quantityAvailable;
     private int reorderLevel;
-    private int supplierId;
+    private Integer supplierId;
     private Timestamp createdAt;
 
     //Default Constructor
@@ -73,11 +73,11 @@ public class Material {
         this.reorderLevel = reorderLevel;
     }
 
-    public int getSupplierId() {
+    public Integer getSupplierId() {
         return supplierId;
     }
 
-    public void setSupplierId(int supplierId) {
+    public void setSupplierId(Integer supplierId) {
         this.supplierId = supplierId;
     }
 
