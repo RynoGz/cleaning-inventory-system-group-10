@@ -17,8 +17,8 @@ public class SupplierDAO {
 
         String sql = """
             INSERT INTO suppliers
-            (company_name, contact_person, phone, email)
-            VALUES (?, ?, ?, ?)
+            (name, contact_person, phone, email,address)
+            VALUES (?, ?, ?, ?, ?)
             """;
 
         try (Connection con = db.getCon();
@@ -28,6 +28,7 @@ public class SupplierDAO {
             pstmt.setString(2, supplier.getContactPerson());
             pstmt.setString(3, supplier.getPhone());
             pstmt.setString(4, supplier.getEmail());
+            pstmt.setString(5, supplier.getAddress());
 
             return pstmt.executeUpdate() > 0;
 
@@ -41,10 +42,11 @@ public class SupplierDAO {
 
         String sql = """
             UPDATE suppliers
-            SET company_name = ?,
+            SET name = ?,
                 contact_person = ?,
                 phone = ?,
-                email = ?
+                email = ?,
+                address = ?
             WHERE supplier_id = ?
             """;
 
@@ -55,7 +57,8 @@ public class SupplierDAO {
             pstmt.setString(2, supplier.getContactPerson());
             pstmt.setString(3, supplier.getPhone());
             pstmt.setString(4, supplier.getEmail());
-            pstmt.setInt(5, supplier.getSupplierId());
+            pstmt.setString(5, supplier.getAddress());
+            pstmt.setInt(6, supplier.getSupplierId());
 
             return pstmt.executeUpdate() > 0;
         }
@@ -117,6 +120,7 @@ public class SupplierDAO {
             WHERE LOWER(name) LIKE ?
                OR LOWER(contact_person) LIKE ?
                OR LOWER(email) LIKE ?
+                OR LOWER(address) LIKE ?
             ORDER BY name
             """;
 
@@ -128,6 +132,7 @@ public class SupplierDAO {
             pstmt.setString(1, search);
             pstmt.setString(2, search);
             pstmt.setString(3, search);
+            pstmt.setString(4, search);
 
             ResultSet rs = pstmt.executeQuery();
 
@@ -150,5 +155,5 @@ public class SupplierDAO {
         return suppliers;
     }
 
-    
+
 }

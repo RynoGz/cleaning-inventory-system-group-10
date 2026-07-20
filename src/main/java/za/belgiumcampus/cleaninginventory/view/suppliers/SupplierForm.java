@@ -3,7 +3,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package za.belgiumcampus.cleaninginventory.view.suppliers;
+import java.sql.SQLException;
+import java.util.List;
 
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+import za.belgiumcampus.cleaninginventory.controller.SupplierController;
+import za.belgiumcampus.cleaninginventory.model.Supplier;
 /**
  *
  * @author rynog
@@ -11,13 +18,105 @@ package za.belgiumcampus.cleaninginventory.view.suppliers;
 public class SupplierForm extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(SupplierForm.class.getName());
+    private int selectedSupplierId = -1;
+    private final SupplierController supplierController;
 
+    private DefaultTableModel tableModel;
     /**
      * Creates new form SupplierForm
      */
     public SupplierForm() {
         initComponents();
+        supplierController = new SupplierController();
+
+        tableModel = (DefaultTableModel) tblSuppliers.getModel();
+
+        loadSuppliers();
     }
+    
+    private void loadSuppliers() {
+
+    try {
+
+        tableModel.setRowCount(0);
+
+        List<Supplier> suppliers = supplierController.getAllSuppliers();
+
+        for (Supplier supplier : suppliers) {
+
+            tableModel.addRow(new Object[]{
+                supplier.getSupplierId(),
+                supplier.getName(),
+                supplier.getContactPerson(),
+                supplier.getPhone(),
+                supplier.getEmail(),
+                supplier.getAddress()
+            });
+
+        }
+
+    } catch (SQLException e) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                e.getMessage(),
+                "Database Error",
+                JOptionPane.ERROR_MESSAGE);
+
+    }
+
+}
+    
+    private void clearFields() {
+
+    txtSupplierName.setText("");
+    txtContactPerson.setText("");
+    txtPhone.setText("");
+    txtEmail.setText("");
+    txtAddress.setText("");
+    txtSearch.setText("");
+
+    txtSupplierName.requestFocus();
+    selectedSupplierId = -1;
+
+}
+ 
+    private void searchSuppliers() {
+
+    try {
+
+        tableModel.setRowCount(0);
+
+        String searchText = txtSearch.getText().trim();
+
+        List<Supplier> suppliers =
+                supplierController.searchSuppliers(searchText);
+
+        for (Supplier supplier : suppliers) {
+
+            tableModel.addRow(new Object[]{
+                supplier.getSupplierId(),
+                supplier.getName(),
+                supplier.getContactPerson(),
+                supplier.getPhone(),
+                supplier.getEmail(),
+                supplier.getAddress()
+            });
+
+        }
+
+    } catch (SQLException e) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                e.getMessage(),
+                "Database Error",
+                JOptionPane.ERROR_MESSAGE);
+
+    }
+
+}
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -42,7 +141,7 @@ public class SupplierForm extends javax.swing.JFrame {
         txtAddress = new javax.swing.JTextArea();
         txtEmail = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tblMaterials = new javax.swing.JTable();
+        tblSuppliers = new javax.swing.JTable();
         jLabel7 = new javax.swing.JLabel();
         txtSearch = new javax.swing.JTextField();
         btnAdd = new javax.swing.JButton();
@@ -130,29 +229,52 @@ public class SupplierForm extends javax.swing.JFrame {
                 .addGap(8, 8, 8))
         );
 
-        tblMaterials.setModel(new javax.swing.table.DefaultTableModel(
+        tblSuppliers.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "Name", "Contact Person", "Phone", "Email"
+                "ID", "Name", "Contact Person", "Phone", "Email", "Address"
             }
-        ));
-        jScrollPane2.setViewportView(tblMaterials);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblSuppliers.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblSuppliersMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tblSuppliers);
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel7.setText("Search Material:");
 
+        txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSearchKeyReleased(evt);
+            }
+        });
+
         btnAdd.setText("Add");
+        btnAdd.addActionListener(this::btnAddActionPerformed);
 
         btnUpdate.setText("Update");
+        btnUpdate.addActionListener(this::btnUpdateActionPerformed);
 
         btnDelete.setText("Delete");
+        btnDelete.addActionListener(this::btnDeleteActionPerformed);
 
         btnClear.setText("Clear Fields");
+        btnClear.addActionListener(this::btnClearActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -204,6 +326,164 @@ public class SupplierForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        // TODO add your handling code here:
+        try {
+
+    Supplier supplier = new Supplier();
+
+    supplier.setName(txtSupplierName.getText().trim());
+    supplier.setContactPerson(txtContactPerson.getText().trim());
+    supplier.setPhone(txtPhone.getText().trim());
+    supplier.setEmail(txtEmail.getText().trim());
+    supplier.setAddress(txtAddress.getText().trim());
+
+    if (supplierController.addSupplier(supplier)) {
+
+        JOptionPane.showMessageDialog(this,
+                "Supplier added successfully.");
+
+        loadSuppliers();
+        clearFields();
+
+    } else {
+
+        JOptionPane.showMessageDialog(this,
+                "Failed to add supplier.");
+
+    }
+
+} catch (SQLException e) {
+
+    JOptionPane.showMessageDialog(this,
+            e.getMessage(),
+            "Database Error",
+            JOptionPane.ERROR_MESSAGE);
+
+}
+    }//GEN-LAST:event_btnAddActionPerformed
+
+    private void tblSuppliersMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblSuppliersMouseClicked
+        // TODO add your handling code here:
+        
+        int selectedRow = tblSuppliers.getSelectedRow();
+        selectedSupplierId = Integer.parseInt(
+        tableModel.getValueAt(selectedRow, 0).toString());
+
+if (selectedRow != -1) {
+
+    txtSupplierName.setText(tableModel.getValueAt(selectedRow, 1).toString());
+    txtContactPerson.setText(tableModel.getValueAt(selectedRow, 2).toString());
+    txtPhone.setText(tableModel.getValueAt(selectedRow, 3).toString());
+    txtEmail.setText(tableModel.getValueAt(selectedRow, 4).toString());
+    txtAddress.setText(tableModel.getValueAt(selectedRow, 5).toString());
+}
+    }//GEN-LAST:event_tblSuppliersMouseClicked
+
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+        // TODO add your handling code here:
+        try {
+
+    if (selectedSupplierId == -1) {
+
+        JOptionPane.showMessageDialog(this,
+                "Please select a supplier first.");
+
+        return;
+    }
+
+    Supplier supplier = new Supplier();
+
+    supplier.setSupplierId(selectedSupplierId);
+    supplier.setName(txtSupplierName.getText().trim());
+    supplier.setContactPerson(txtContactPerson.getText().trim());
+    supplier.setPhone(txtPhone.getText().trim());
+    supplier.setEmail(txtEmail.getText().trim());
+    supplier.setAddress(txtAddress.getText().trim());
+
+    if (supplierController.updateSupplier(supplier)) {
+
+        JOptionPane.showMessageDialog(this,
+                "Supplier updated successfully.");
+
+        loadSuppliers();
+        clearFields();
+
+        selectedSupplierId = -1;
+    }
+
+} catch (SQLException e) {
+
+    JOptionPane.showMessageDialog(
+            this,
+            e.getMessage(),
+            "Database Error",
+            JOptionPane.ERROR_MESSAGE);
+}
+    }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        // TODO add your handling code here:
+        if (selectedSupplierId == -1) {
+
+    JOptionPane.showMessageDialog(
+            this,
+            "Please select a supplier first.");
+
+    return;
+}
+
+int choice = JOptionPane.showConfirmDialog(
+        this,
+        "Are you sure you want to delete this supplier?",
+        "Confirm Delete",
+        JOptionPane.YES_NO_OPTION);
+
+if (choice == JOptionPane.YES_OPTION) {
+
+    try {
+
+        if (supplierController.deleteSupplier(selectedSupplierId)) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Supplier deleted successfully.");
+
+            loadSuppliers();
+            clearFields();
+
+        } else {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Supplier could not be deleted.");
+
+        }
+
+    } catch (SQLException e) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                e.getMessage(),
+                "Database Error",
+                JOptionPane.ERROR_MESSAGE);
+
+    }
+
+}
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void txtSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyReleased
+        // TODO add your handling code here:
+        searchSuppliers();
+    }//GEN-LAST:event_txtSearchKeyReleased
+
+    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        // TODO add your handling code here:
+        clearFields();
+        loadSuppliers();
+    }//GEN-LAST:event_btnClearActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -244,7 +524,7 @@ public class SupplierForm extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTable tblMaterials;
+    private javax.swing.JTable tblSuppliers;
     private javax.swing.JTextArea txtAddress;
     private javax.swing.JTextField txtContactPerson;
     private javax.swing.JTextField txtEmail;
