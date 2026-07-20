@@ -3,6 +3,17 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package za.belgiumcampus.cleaninginventory.view.materials;
+import java.sql.SQLException;
+import java.util.List;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+import za.belgiumcampus.cleaninginventory.controller.MaterialController;
+import za.belgiumcampus.cleaninginventory.controller.SupplierController;
+import za.belgiumcampus.cleaninginventory.model.Material;
+import za.belgiumcampus.cleaninginventory.model.Supplier;
 
 /**
  *
@@ -11,13 +22,84 @@ package za.belgiumcampus.cleaninginventory.view.materials;
 public class MaterialForm extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MaterialForm.class.getName());
-
+    
+    private final MaterialController materialController;
+    private final SupplierController supplierController;
+    private int selectedMaterialId = -1;
+    private DefaultTableModel tableModel;
     /**
      * Creates new form MaterialForm
      */
     public MaterialForm() {
         initComponents();
+        
+        materialController = new MaterialController();
+        supplierController = new SupplierController();
+
+        tableModel = (DefaultTableModel) tblMaterials.getModel();
+
+        loadSuppliers();
+        loadMaterials();
     }
+    
+    private void loadSuppliers() {
+
+    try {
+
+        DefaultComboBoxModel<Supplier> model = new DefaultComboBoxModel<>();
+
+        List<Supplier> suppliers = supplierController.getAllSuppliers();
+
+        for (Supplier supplier : suppliers) {
+            model.addElement(supplier);
+        }
+
+        cmbSupplier.setModel(model);
+
+    } catch (SQLException e) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                e.getMessage(),
+                "Database Error",
+                JOptionPane.ERROR_MESSAGE);
+
+    }
+
+}
+    
+    private void loadMaterials() {
+
+    try {
+
+        tableModel.setRowCount(0);
+
+        List<Material> materials = materialController.getAllMaterials();
+
+        for (Material material : materials) {
+
+            tableModel.addRow(new Object[]{
+                material.getMaterialId(),
+                material.getName(),
+                material.getQuantityAvailable(),
+                material.getReorderLevel(),
+                material.getSupplierId(),
+                material.getDescription()
+            });
+
+        }
+
+    } catch (SQLException e) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                e.getMessage(),
+                "Database Error",
+                JOptionPane.ERROR_MESSAGE);
+
+    }
+
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -63,6 +145,7 @@ public class MaterialForm extends javax.swing.JFrame {
         jLabel1.setText("Material Management");
 
         btnAdd.setText("Add");
+        btnAdd.addActionListener(this::btnAddActionPerformed);
 
         btnUpdate.setText("Update");
 
@@ -72,15 +155,23 @@ public class MaterialForm extends javax.swing.JFrame {
 
         tblMaterials.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "Name", "Quantity", "Reorder Level", "Supplier"
+                "ID", "Name", "Quantity", "Reorder Level", "Supplier", "Description"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane2.setViewportView(tblMaterials);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -93,8 +184,6 @@ public class MaterialForm extends javax.swing.JFrame {
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel6.setText("Supplier:");
-
-        cmbSupplier.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText("Material Name:");
@@ -131,9 +220,7 @@ public class MaterialForm extends javax.swing.JFrame {
                             .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(32, 32, 32)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(txtQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(txtQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtReorderLevel))))
                 .addContainerGap())
         );
@@ -218,6 +305,80 @@ public class MaterialForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        // TODO add your handling code here:
+        try {
+
+    Material material = new Material();
+
+    material.setName(txtMaterialName.getText().trim());
+    material.setDescription(txtDescription.getText().trim());
+
+    material.setQuantityAvailable(
+            Integer.parseInt(txtQuantity.getText().trim()));
+
+    material.setReorderLevel(
+            Integer.parseInt(txtReorderLevel.getText().trim()));
+
+    Supplier supplier = (Supplier) cmbSupplier.getSelectedItem();
+
+    if (supplier != null) {
+        material.setSupplierId(supplier.getSupplierId());
+    }
+
+    if (materialController.addMaterial(material)) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Material added successfully.");
+
+        loadMaterials();
+        clearFields();
+
+    } else {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Failed to add material.");
+
+    }
+
+} catch (NumberFormatException e) {
+
+    JOptionPane.showMessageDialog(
+            this,
+            "Quantity and Reorder Level must be numbers.");
+
+} catch (SQLException e) {
+
+    JOptionPane.showMessageDialog(
+            this,
+            e.getMessage(),
+            "Database Error",
+            JOptionPane.ERROR_MESSAGE);
+
+}
+        
+        
+    }//GEN-LAST:event_btnAddActionPerformed
+
+    private void clearFields() {
+
+    txtMaterialName.setText("");
+    txtDescription.setText("");
+    txtQuantity.setText("");
+    txtReorderLevel.setText("");
+    txtSearch.setText("");
+
+    if (cmbSupplier.getItemCount() > 0) {
+        cmbSupplier.setSelectedIndex(0);
+    }
+
+    selectedMaterialId = -1;
+
+    txtMaterialName.requestFocus();
+
+}
     /**
      * @param args the command line arguments
      */
@@ -248,7 +409,7 @@ public class MaterialForm extends javax.swing.JFrame {
     private javax.swing.JButton btnClear;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnUpdate;
-    private javax.swing.JComboBox<String> cmbSupplier;
+    private javax.swing.JComboBox<Supplier> cmbSupplier;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

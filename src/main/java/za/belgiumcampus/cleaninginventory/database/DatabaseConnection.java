@@ -16,6 +16,14 @@ public class DatabaseConnection {
             
     Connection con;
     
+    public DatabaseConnection() {
+    try {
+        connect();
+    } catch (ClassNotFoundException e) {
+        throw new RuntimeException("Failed to connect to the database.", e);
+    }
+}
+    
     public void connect() throws ClassNotFoundException{
         try{
             Class.forName(DRIVER);
@@ -142,11 +150,14 @@ public class DatabaseConnection {
         }
     }
     
-    public Connection getCon() throws SQLException{
-        if (this.con != null) {
-            return this.con;
-        } else {
-            throw new SQLException("Database connection failed: Connection object is null.");
-        }
+    public Connection getCon() throws SQLException {
+
+    try {
+        Class.forName(DRIVER);
+    } catch (ClassNotFoundException e) {
+        throw new SQLException("Failed to load Derby driver.", e);
     }
+
+    return DriverManager.getConnection(JDBC_URL);
+}
 }
