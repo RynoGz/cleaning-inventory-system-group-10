@@ -67,16 +67,16 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="btnLogout" max="32767" attributes="0"/>
-                      <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jPanel3" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="btnDashboard" max="32767" attributes="0"/>
-                      <Component id="btnMaterials" alignment="0" max="32767" attributes="0"/>
-                      <Component id="btnSuppliers" alignment="0" max="32767" attributes="0"/>
-                      <Component id="btnCleaners" alignment="0" max="32767" attributes="0"/>
-                      <Component id="btnIssuance" alignment="1" max="32767" attributes="0"/>
+                      <Component id="btnMaterials" max="32767" attributes="0"/>
+                      <Component id="btnSuppliers" max="32767" attributes="0"/>
+                      <Component id="btnCleaners" max="32767" attributes="0"/>
+                      <Component id="btnIssuance" pref="232" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
-                  <Component id="pnlContent" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="189" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="pnlContent" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -264,7 +264,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="629" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="1023" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">

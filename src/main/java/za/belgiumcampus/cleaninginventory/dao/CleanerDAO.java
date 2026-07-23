@@ -71,7 +71,7 @@ public class CleanerDAO {
         String sql = """
             SELECT *
             FROM cleaners
-            ORDER BY name
+            ORDER BY first_name
         """;
 
         try (Connection con = db.getCon();
@@ -102,10 +102,10 @@ public class CleanerDAO {
         String sql = """
             SELECT *
             FROM cleaners
-            WHERE LOWER(name) LIKE ?
+            WHERE LOWER(first_name) LIKE ?
             OR LOWER(phone) LIKE ?
             OR LOWER(department) Like ?
-            ORDER BY name
+            ORDER BY first_name
         """;
 
         try (Connection con = db.getCon();

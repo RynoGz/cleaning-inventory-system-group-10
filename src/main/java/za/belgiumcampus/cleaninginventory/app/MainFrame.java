@@ -1,11 +1,13 @@
 
 package za.belgiumcampus.cleaninginventory.app;
 
+import java.awt.CardLayout;
 import za.belgiumcampus.cleaninginventory.database.DatabaseConnection;
 import za.belgiumcampus.cleaninginventory.view.dashboard.DashboardsForm;
 import za.belgiumcampus.cleaninginventory.view.materials.MaterialForm;
 import za.belgiumcampus.cleaninginventory.view.reports.ReportsForm;
 import za.belgiumcampus.cleaninginventory.view.suppliers.SupplierForm;
+import za.belgiumcampus.cleaninginventory.view.cleaners.CleanersForm;
 
 
 public class MainFrame extends javax.swing.JFrame {
@@ -14,6 +16,15 @@ public class MainFrame extends javax.swing.JFrame {
 
     public MainFrame() {
         initComponents();
+        
+        pnlContent.setLayout(new CardLayout());
+
+        pnlContent.add(new DashboardsForm(), "dashboard");
+        pnlContent.add(new CleanersForm(), "cleaners");
+        pnlContent.add(new MaterialForm(), "material");
+        pnlContent.add(new SupplierForm(), "suppliers");
+
+        ((CardLayout) pnlContent.getLayout()).show(pnlContent, "dashboard");
     }
     
     private void showForm(javax.swing.JPanel panel) {
@@ -28,6 +39,12 @@ public class MainFrame extends javax.swing.JFrame {
         form.setLocationRelativeTo(this);
         form.setVisible(true);
     }
+    
+    private void loadForm(String name){
+        CardLayout cl = (CardLayout) pnlContent.getLayout();
+        cl.show(pnlContent, name);
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -132,7 +149,7 @@ public class MainFrame extends javax.swing.JFrame {
         pnlContent.setLayout(pnlContentLayout);
         pnlContentLayout.setHorizontalGroup(
             pnlContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 629, Short.MAX_VALUE)
+            .addGap(0, 1023, Short.MAX_VALUE)
         );
         pnlContentLayout.setVerticalGroup(
             pnlContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -152,10 +169,10 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(btnMaterials, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnSuppliers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnCleaners, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnIssuance, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(50, 50, 50)
-                .addComponent(pnlContent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(189, 189, 189))
+                    .addComponent(btnIssuance, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(pnlContent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(32, 32, 32))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -197,19 +214,19 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboardActionPerformed
-        showForm(new DashboardsForm());
+        loadForm("dashboard");
     }//GEN-LAST:event_btnDashboardActionPerformed
     //these bottom ones do not appear in the panel. They need to be JPanel like the dasboard
     private void btnMaterialsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMaterialsActionPerformed
-        openForm(new MaterialForm());
+        loadForm("material");
     }//GEN-LAST:event_btnMaterialsActionPerformed
 
     private void btnSuppliersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuppliersActionPerformed
-        openForm(new SupplierForm());
+        loadForm("suppliers");
     }//GEN-LAST:event_btnSuppliersActionPerformed
 
     private void btnCleanersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCleanersActionPerformed
-        //openForm(new CleanerForm());
+        loadForm("cleaners");
     }//GEN-LAST:event_btnCleanersActionPerformed
 
     private void btnIssuanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIssuanceActionPerformed

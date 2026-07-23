@@ -15,7 +15,7 @@ import za.belgiumcampus.cleaninginventory.model.Supplier;
  *
  * @author rynog
  */
-public class SupplierForm extends javax.swing.JFrame {
+public class SupplierForm extends javax.swing.JPanel {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(SupplierForm.class.getName());
     private int selectedSupplierId = -1;
@@ -149,8 +149,6 @@ public class SupplierForm extends javax.swing.JFrame {
         btnDelete = new javax.swing.JButton();
         btnClear = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Supplier Management");
@@ -276,8 +274,8 @@ public class SupplierForm extends javax.swing.JFrame {
         btnClear.setText("Clear Fields");
         btnClear.addActionListener(this::btnClearActionPerformed);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -322,8 +320,6 @@ public class SupplierForm extends javax.swing.JFrame {
                             .addComponent(btnClear))))
                 .addGap(19, 19, 19))
         );
-
-        pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed

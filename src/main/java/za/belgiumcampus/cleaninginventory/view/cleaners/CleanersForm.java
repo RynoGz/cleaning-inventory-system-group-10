@@ -10,7 +10,7 @@ import za.belgiumcampus.cleaninginventory.controller.CleanerController;
 import za.belgiumcampus.cleaninginventory.model.Cleaner;
 import za.belgiumcampus.cleaninginventory.util.Validation;
 
-public class CleanersForm extends javax.swing.JFrame {
+public class CleanersForm extends javax.swing.JPanel {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CleanersForm.class.getName());
 
@@ -115,8 +115,6 @@ public class CleanersForm extends javax.swing.JFrame {
         chkActive = new javax.swing.JCheckBox();
         jLabel8 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Cleaners Management");
@@ -199,8 +197,8 @@ public class CleanersForm extends javax.swing.JFrame {
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel8.setText("Is Active");
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -312,8 +310,6 @@ public class CleanersForm extends javax.swing.JFrame {
                                 .addComponent(jLabel5)))
                         .addGap(29, 29, 29))))
         );
-
-        pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
