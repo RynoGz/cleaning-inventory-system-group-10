@@ -44,4 +44,19 @@ public class Validation {
 
         return text.length() <= maxLength;
     }
+    
+ public static boolean isValidBoolean(boolean value) {
+        // Business rule example:
+        // return true only if the cleaner is active
+        return value;
+    }
+
+    public static boolean isPositiveNumber(Integer value) {
+        return value != null && value > 0;
+    }
+    
+    public static boolean isValidDepartment(String dept) {
+    return dept != null && !dept.isBlank();
+}
+
 }
