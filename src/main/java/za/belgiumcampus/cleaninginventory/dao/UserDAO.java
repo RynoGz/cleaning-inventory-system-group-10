@@ -176,5 +176,47 @@ public class UserDAO {
         }
 
         return false;
-    }    
+    }   
+    
+    public List<User> searchUsers(String searchText) {
+
+        List<User> users = new ArrayList<>();
+
+        String sql =
+            "SELECT * FROM users " +
+            "WHERE LOWER(username) LIKE ? OR LOWER(email) LIKE ? " +
+            "ORDER BY username";
+
+        try (
+            Connection con = db.getCon();
+            PreparedStatement pstmt = con.prepareStatement(sql)
+        ) {
+
+            String search = "%" + searchText.toLowerCase() + "%";
+
+            pstmt.setString(1, search);
+            pstmt.setString(2, search);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+
+                User user = new User();
+
+                user.setUserId(rs.getInt("user_id"));
+                user.setUsername(rs.getString("username"));
+                user.setEmail(rs.getString("email"));
+                user.setPasswordHash(rs.getString("password_hash"));
+                user.setRole(rs.getString("role"));
+                user.setCreatedAt(rs.getTimestamp("created_at"));
+
+                users.add(user);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return users;
+    }
 }

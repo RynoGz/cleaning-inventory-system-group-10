@@ -3,41 +3,60 @@ package za.belgiumcampus.cleaninginventory.app;
 
 import java.awt.CardLayout;
 import za.belgiumcampus.cleaninginventory.database.DatabaseConnection;
+import za.belgiumcampus.cleaninginventory.controller.AuthenticationController;
 import za.belgiumcampus.cleaninginventory.view.dashboard.DashboardsForm;
 import za.belgiumcampus.cleaninginventory.view.materials.MaterialForm;
 import za.belgiumcampus.cleaninginventory.view.reports.ReportsForm;
 import za.belgiumcampus.cleaninginventory.view.suppliers.SupplierForm;
 import za.belgiumcampus.cleaninginventory.view.cleaners.CleanersForm;
+import za.belgiumcampus.cleaninginventory.view.login.LoginForm;
+import za.belgiumcampus.cleaninginventory.model.User;
+import za.belgiumcampus.cleaninginventory.view.userManagement.UserManagementForm;
+import javax.swing.JOptionPane;
 
 
 public class MainFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainFrame.class.getName());
+    
+    private User currentUser;
+    
+    private final AuthenticationController authController = new AuthenticationController();
+    
+    private boolean isAdmin() {
+        return currentUser.getRole().equalsIgnoreCase("Admin");
+    }
 
     public MainFrame() {
+
+    }
+    
+    public MainFrame(User user) {
         initComponents();
-        
+        currentUser = user;
+        initializeMainFrame();
+    }
+    
+    private void initializeMainFrame() {
+
+        setIconImage(new javax.swing.ImageIcon(
+            getClass().getResource("/images/BroomIcon.png")).getImage());
+
+        lblUser.setText("Logged in as: " + currentUser.getUsername() + " (" + currentUser.getRole() + ")");
+
         pnlContent.setLayout(new CardLayout());
 
-        pnlContent.add(new DashboardsForm(), "dashboard");
+        pnlContent.add(new DashboardsForm(currentUser), "dashboard");
         pnlContent.add(new CleanersForm(), "cleaners");
         pnlContent.add(new MaterialForm(), "material");
         pnlContent.add(new SupplierForm(), "suppliers");
+        pnlContent.add(new UserManagementForm(), "users");
 
-        ((CardLayout) pnlContent.getLayout()).show(pnlContent, "dashboard");
-    }
-    
-    private void showForm(javax.swing.JPanel panel) {
-        pnlContent.removeAll();
-        pnlContent.setLayout(new java.awt.BorderLayout());
-        pnlContent.add(panel, java.awt.BorderLayout.CENTER);
-        pnlContent.revalidate();
-        pnlContent.repaint();
-    }
-    
-    private void openForm(javax.swing.JFrame form) {
-        form.setLocationRelativeTo(this);
-        form.setVisible(true);
+        if (isAdmin()) {
+            loadForm("dashboard");
+        } else {
+            loadForm("suppliers");
+        }
     }
     
     private void loadForm(String name){
@@ -50,9 +69,9 @@ public class MainFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel2 = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        pnlMain = new javax.swing.JPanel();
+        pnlTitle = new javax.swing.JPanel();
+        lblTitle = new javax.swing.JLabel();
         btnDashboard = new javax.swing.JButton();
         btnMaterials = new javax.swing.JButton();
         btnSuppliers = new javax.swing.JButton();
@@ -60,6 +79,8 @@ public class MainFrame extends javax.swing.JFrame {
         btnLogout = new javax.swing.JButton();
         btnIssuance = new javax.swing.JButton();
         pnlContent = new javax.swing.JPanel();
+        btnUsersAction = new javax.swing.JButton();
+        lblUser = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -73,30 +94,33 @@ public class MainFrame extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Cleaning Inventory System");
         setBackground(new java.awt.Color(255, 255, 255));
+        setName("frmMain"); // NOI18N
+        setResizable(false);
 
-        jPanel1.setBackground(new java.awt.Color(24, 24, 24));
+        pnlMain.setBackground(new java.awt.Color(24, 24, 24));
 
-        jPanel3.setOpaque(false);
+        pnlTitle.setOpaque(false);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("<html> Inventory System</html>");
+        lblTitle.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lblTitle.setForeground(new java.awt.Color(255, 255, 255));
+        lblTitle.setText("<html> Inventory System</html>");
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout pnlTitleLayout = new javax.swing.GroupLayout(pnlTitle);
+        pnlTitle.setLayout(pnlTitleLayout);
+        pnlTitleLayout.setHorizontalGroup(
+            pnlTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlTitleLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
+                .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        pnlTitleLayout.setVerticalGroup(
+            pnlTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlTitleLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(lblTitle)
                 .addContainerGap())
         );
 
@@ -149,52 +173,77 @@ public class MainFrame extends javax.swing.JFrame {
         pnlContent.setLayout(pnlContentLayout);
         pnlContentLayout.setHorizontalGroup(
             pnlContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1023, Short.MAX_VALUE)
+            .addGap(0, 1029, Short.MAX_VALUE)
         );
         pnlContentLayout.setVerticalGroup(
             pnlContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 512, Short.MAX_VALUE)
         );
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnLogout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnMaterials, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnSuppliers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnCleaners, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnIssuance, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
+        btnUsersAction.setBackground(new java.awt.Color(24, 24, 24));
+        btnUsersAction.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnUsersAction.setForeground(new java.awt.Color(255, 255, 255));
+        btnUsersAction.setText("User Management");
+        btnUsersAction.setBorderPainted(false);
+        btnUsersAction.addActionListener(this::btnUsersActionActionPerformed);
+
+        lblUser.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblUser.setForeground(new java.awt.Color(255, 255, 255));
+        lblUser.setText("Logged in as : Administrator");
+
+        javax.swing.GroupLayout pnlMainLayout = new javax.swing.GroupLayout(pnlMain);
+        pnlMain.setLayout(pnlMainLayout);
+        pnlMainLayout.setHorizontalGroup(
+            pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlMainLayout.createSequentialGroup()
+                .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlMainLayout.createSequentialGroup()
+                        .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlMainLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(btnLogout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(pnlTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btnDashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnMaterials, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnSuppliers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnCleaners, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnIssuance, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)))
+                            .addComponent(btnUsersAction, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(pnlMainLayout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addComponent(lblUser, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addComponent(pnlContent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(32, 32, 32))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        pnlMainLayout.setVerticalGroup(
+            pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlMainLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnMaterials, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnSuppliers, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnCleaners, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnIssuance, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(38, Short.MAX_VALUE)
-                .addComponent(pnlContent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(pnlMainLayout.createSequentialGroup()
+                        .addComponent(pnlTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnMaterials, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnSuppliers, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCleaners, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnIssuance, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnUsersAction, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblUser, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(41, 41, 41)
+                        .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlMainLayout.createSequentialGroup()
+                        .addGap(0, 32, Short.MAX_VALUE)
+                        .addComponent(pnlContent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(34, 34, 34))
         );
 
@@ -202,11 +251,11 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnlMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnlMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -214,9 +263,14 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboardActionPerformed
-        loadForm("dashboard");
+      
+        if (!isAdmin()) {
+            JOptionPane.showMessageDialog(this,"Dashboard is only available to administrators.");
+            return;
+        }
+        loadForm("dashboard");        
     }//GEN-LAST:event_btnDashboardActionPerformed
-    //these bottom ones do not appear in the panel. They need to be JPanel like the dasboard
+
     private void btnMaterialsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMaterialsActionPerformed
         loadForm("material");
     }//GEN-LAST:event_btnMaterialsActionPerformed
@@ -234,10 +288,23 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnIssuanceActionPerformed
 
     private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
-        // TODO add your handling code here:
+        authController.logout();
+        dispose();
+
+        LoginForm login = new LoginForm();
+        login.setVisible(true);
     }//GEN-LAST:event_btnLogoutActionPerformed
 
-    public static DatabaseConnection db = new DatabaseConnection();
+    private void btnUsersActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsersActionActionPerformed
+        if (!isAdmin()) {
+            JOptionPane.showMessageDialog(this, "User Management is only available to administrators.");
+            return;
+        }
+
+        loadForm("users");
+    }//GEN-LAST:event_btnUsersActionActionPerformed
+
+    //public static DatabaseConnection db = new DatabaseConnection();
     
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -259,12 +326,12 @@ public class MainFrame extends javax.swing.JFrame {
 
 
         java.awt.EventQueue.invokeLater(() -> new MainFrame().setVisible(true));
-        try{
-            db.connect();
-            db.createTable();
-        } catch (ClassNotFoundException ex){
-            ex.printStackTrace();
-        }
+//        try{
+//            db.connect();
+//            db.createTable();
+//        } catch (ClassNotFoundException ex){
+//            ex.printStackTrace();
+//        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -274,10 +341,12 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnMaterials;
     private javax.swing.JButton btnSuppliers;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton btnUsersAction;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
+    private javax.swing.JLabel lblTitle;
+    private javax.swing.JLabel lblUser;
     private javax.swing.JPanel pnlContent;
+    private javax.swing.JPanel pnlMain;
+    private javax.swing.JPanel pnlTitle;
     // End of variables declaration//GEN-END:variables
 }
